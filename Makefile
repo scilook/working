@@ -1,6 +1,6 @@
 CC = cc
 CF = -g -Wall -Werror -Wextra #-fsanitize=address
-SRCS = philo.c philo_utils.c
+SRCS = philo.c philo_action.c
 OBJS = $(SRCS:.c=.o)
 NAME = philo
 
