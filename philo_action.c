@@ -6,23 +6,13 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 20:41:33 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/11 15:22:55 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/11 17:23:45 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 //Entry section
-suseconds_t	get_now(void)
-{
-	struct timeval	tv;
-	suseconds_t		ts;
-
-	gettimeofday(&tv, NULL);
-	ts = tv.tv_sec * 1000 * 1000 + tv.tv_usec;
-	return (ts);
-}
-
 static void	thinking_time(t_philo *philo)
 {
 	if (philo->units->activate)
@@ -78,7 +68,6 @@ void	*thr_start(void *arg)
 	t_philo		*philo;
 
 	philo = (t_philo *)arg;
-	philo->start = get_now();
 	while (philo->units->wait);
 	philo->start = get_now();
 	if (philo->num % 2)

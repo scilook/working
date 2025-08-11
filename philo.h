@@ -6,7 +6,7 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 12:15:52 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/11 14:26:29 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/11 17:36:32 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,6 @@ typedef struct s_philo
 
 suseconds_t	get_now(void);
 void		*thr_start(void *arg);
+int			ft_atoi(const char *s);
 
 #endif /* PHILO_H */

@@ -6,37 +6,11 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 19:24:36 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/11 15:32:23 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/11 17:33:40 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-int	ft_atoi(const char *s)
-{
-	size_t	i;
-	int		result;
-	int		flag;
-
-	i = 0;
-	result = 0;
-	flag = 1;
-	while (s[i] == ' ' || (s[i] >= 9 && s[i] <= 13))
-		i++;
-	if (s[i] == '-')
-	{
-		flag = -1;
-		i++;
-	}
-	else if (s[i] == '+')
-		i++;
-	while (s[i] >= '0' && s[i] <= '9')
-	{
-		result = result * 10 + ((char)s[i] - '0');
-		i++;
-	}
-	return (flag * result);
-}
 
 t_units	*get_units(int argc, char **argv)
 {
@@ -70,7 +44,7 @@ t_philo	**init_philos(t_philo **philos, t_units *units)
 		pthread_mutex_init(philos[i]->l_fork, NULL);
 		philos[i]->cnt = 0;
 		philos[i]->checked = 0;
-		philos[i]->start = 0;
+		philos[i]->start = get_now();
 		philos[i]->dur = 0;
 		philos[i]->num = i + 1;
 		philos[i]->units = units;
@@ -84,39 +58,24 @@ t_philo	**init_philos(t_philo **philos, t_units *units)
 	}
 	return (philos);
 }
-/* 
-void	philos_monitor(t_philo **philos, t_units *units)
-{
-	size_t	i;
-	size_t	enough;
 
+void	*time_check(void *arg)
+{
+	t_philo	**philos;
+	size_t	i;
+
+	philos = (t_philo **)arg;
 	i = 0;
-	enough = 0;
-	units->wait = 0;
-	while (1)
+	while (philos[i]->dur < philos[i]->units->time_to_die)
 	{
-		// if (philos[i]->start)
-		// 	philos[i]->dur = get_now() - philos[i]->start;
-		// if (philos[i]->dur >= units->time_to_die)
-		// 	break ;
-		while (get_now() - philos[i]->start >= units->time_to_die)
-			break ;
-		if (philos[i]->cnt >= units->must_eat && !philos[i]->checked)
-		{
-			philos[i]->checked = 1;
-			enough++;
-		}
-		if (enough == units->size)
-			break ;
+		philos[i]->dur = get_now() - philos[i]->start;
 		i++;
-		if (i == units->size)
+		if (i == philos[i]->units->size)
 			i = 0;
 	}
-	units->activate = 0;
-	usleep(1000);
-	if (philos[i]->dur >= units->time_to_die)
-		printf("%ld %ld is died\n", get_now() / 1000, philos[i]->num);
-} */
+	return (philos);
+}
+
 void	philos_monitor(t_philo **philos, t_units *units)
 {
 	size_t	i;
@@ -125,7 +84,7 @@ void	philos_monitor(t_philo **philos, t_units *units)
 	i = 0;
 	enough = 0;
 	units->wait = 0;
-	while (get_now() - philos[i]->start < units->time_to_die)
+	while (philos[i]->dur < units->time_to_die)
 	{
 		if (philos[i]->cnt >= units->must_eat && !philos[i]->checked)
 		{
@@ -140,8 +99,9 @@ void	philos_monitor(t_philo **philos, t_units *units)
 	}
 	units->activate = 0;
 	usleep(1000);
-	if (get_now() - philos[i]->start >= units->time_to_die)
+	if (philos[i]->dur > units->time_to_die)
 		printf("%ld %ld is died\n", get_now() / 1000, philos[i]->num);
+	printf("%ld %ld is died\n", philos[i]->dur, philos[i]->start);
 }
 
 int	main(int argc, char *argv[])
@@ -149,6 +109,7 @@ int	main(int argc, char *argv[])
 	size_t		i;
 	t_units		*units;
 	t_philo		**philos;
+	pthread_t	time_keeper;
 
 	if (!(argc == 5 || argc == 6))
 		return (0);
@@ -161,7 +122,8 @@ int	main(int argc, char *argv[])
 		pthread_create(&philos[i]->thr, NULL, thr_start, philos[i]);
 		i++;
 	}
-	//pthread_create( time_keeper)
+	pthread_create(&time_keeper, NULL, time_check, philos);
+	pthread_detach(time_keeper);
 	philos_monitor(philos, units);
 	i = 0;
 	while (i < units->size)
