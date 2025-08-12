@@ -6,7 +6,7 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 12:15:52 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/11 17:36:32 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/12 15:34:34 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,11 @@ typedef struct s_units
 	size_t			size;
 	size_t			activate;
 	size_t			must_eat;
+	suseconds_t		init_time;
 	suseconds_t		time_to_die;
 	suseconds_t		time_to_eat;
 	suseconds_t		time_to_sleep;
+	pthread_mutex_t	print_lock;
 }	t_units;
 
 typedef struct s_philo
@@ -37,7 +39,7 @@ typedef struct s_philo
 	size_t			cnt;
 	size_t			checked;
 	suseconds_t		dur;
-	suseconds_t		start;
+	suseconds_t		start_time;
 	pthread_t		thr;
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
@@ -46,6 +48,9 @@ typedef struct s_philo
 
 suseconds_t	get_now(void);
 void		*thr_start(void *arg);
+void		state_print(t_philo *philo, char *state);
+void		dying_msg(t_philo *philo);
+void		memory_clean(t_philo **philos, t_units *units);
 int			ft_atoi(const char *s);
 
 #endif /* PHILO_H */
