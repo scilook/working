@@ -6,7 +6,7 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 17:23:36 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/12 16:12:17 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/13 16:29:21 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ void	state_print(t_philo *philo, char *state)
 	{
 		pthread_mutex_lock(&philo->units->print_lock);
 		if (philo->units->activate)
-			printf("%ld %ld %s\n",
-				(get_now() - philo->units->init_time) / 1000, philo->num, state);
+			printf("%ld %ld %s\n", (get_now() - philo->units->init_time)
+				/ 1000, philo->num, state);
 		pthread_mutex_unlock(&philo->units->print_lock);
 	}
 }
