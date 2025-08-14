@@ -6,7 +6,7 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 19:24:36 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/13 16:28:03 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/14 17:10:46 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,16 @@ t_units	*get_units(int argc, char **argv)
 	t_units	*units;
 
 	units = (t_units *)malloc(sizeof(t_units));
+	units->print_lock = malloc(sizeof(pthread_mutex_t));
+	units->activate_lock = malloc(sizeof(pthread_mutex_t));
 	units->size = ft_atoi(argv[1]);
-	units->wait = 1;
-	units->activate = 1;
+	units->activate = 0;
 	units->init_time = 0;
 	units->time_to_die = ft_atoi(argv[2]) * 1000;
 	units->time_to_eat = ft_atoi(argv[3]) * 1000;
 	units->time_to_sleep = ft_atoi(argv[4]) * 1000;
-	pthread_mutex_init(&units->print_lock, NULL);
+	pthread_mutex_init(units->print_lock, NULL);
+	pthread_mutex_init(units->activate_lock, NULL);
 	if (argc == 6)
 		units->must_eat = ft_atoi(argv[5]);
 	else
@@ -65,7 +67,7 @@ void	*time_check(void *arg)
 	size_t	i;
 
 	philos = (t_philo **)arg;
-	while (philos[0]->units->wait)
+	while (!philos[0]->units->activate)
 		usleep(100);
 	i = 0;
 	while (philos[0]->units->activate)
@@ -88,7 +90,7 @@ void	philos_monitor(t_philo **philos, t_units *units)
 	i = 0;
 	enough = 0;
 	units->init_time = get_now();
-	units->wait = 0;
+	not_activate(units);
 	while (philos[i]->dur < units->time_to_die)
 	{
 		if (philos[i]->cnt >= units->must_eat && !philos[i]->checked)
@@ -102,7 +104,7 @@ void	philos_monitor(t_philo **philos, t_units *units)
 		if (i == units->size)
 			i = 0;
 	}
-	units->activate = 0;
+	not_activate(units);
 	if (philos[i]->dur >= units->time_to_die)
 		dying_msg(philos[i]);
 }
