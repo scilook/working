@@ -6,17 +6,14 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 19:24:36 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/14 17:10:46 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/14 17:41:46 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-t_units	*get_units(int argc, char **argv)
+t_units	*get_units(int argc, char **argv, t_units *units)
 {
-	t_units	*units;
-
-	units = (t_units *)malloc(sizeof(t_units));
 	units->print_lock = malloc(sizeof(pthread_mutex_t));
 	units->activate_lock = malloc(sizeof(pthread_mutex_t));
 	units->size = ft_atoi(argv[1]);
@@ -77,7 +74,6 @@ void	*time_check(void *arg)
 		i++;
 		if (i == philos[0]->units->size)
 			i = 0;
-		usleep(3000);
 	}
 	return (NULL);
 }
@@ -118,7 +114,8 @@ int	main(int argc, char *argv[])
 
 	if (!(argc == 5 || argc == 6) || ft_atoi(argv[1]) < 1)
 		return (0);
-	units = get_units(argc, argv);
+	units = (t_units *)malloc(sizeof(t_units));
+	units = get_units(argc, argv, units);
 	philos = (t_philo **)malloc(sizeof(t_philo *) * (units->size));
 	philos = init_philos(philos, units);
 	i = 0;

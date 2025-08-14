@@ -6,7 +6,7 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 12:15:52 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/14 17:06:29 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/14 17:29:58 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_philo
 {
 	size_t			num;
 	size_t			cnt;
+	size_t			eating;
 	size_t			checked;
 	suseconds_t		dur;
 	suseconds_t		start_time;

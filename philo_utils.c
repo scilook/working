@@ -6,7 +6,7 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 17:23:36 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/14 17:06:28 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/14 17:24:31 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ void	memory_clean(t_philo **philos, t_units *units)
 
 	pthread_mutex_destroy(units->print_lock);
 	pthread_mutex_destroy(units->activate_lock);
+	free(units->print_lock);
+	free(units->activate_lock);
 	i = 0;
 	while (i < units->size)
 	{
