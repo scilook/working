@@ -6,7 +6,7 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 19:24:36 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/14 17:41:46 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/14 17:59:05 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,16 +64,17 @@ void	*time_check(void *arg)
 	size_t	i;
 
 	philos = (t_philo **)arg;
-	while (!philos[0]->units->activate)
+	while (!is_activate(philos[0]->units))
 		usleep(100);
 	i = 0;
-	while (philos[0]->units->activate)
+	while (is_activate(philos[i]->units))
 	{
 		if (philos[i]->start_time != 0)
 			philos[i]->dur = get_now() - philos[i]->start_time;
 		i++;
 		if (i == philos[0]->units->size)
 			i = 0;
+		usleep(500);
 	}
 	return (NULL);
 }
@@ -103,6 +104,9 @@ void	philos_monitor(t_philo **philos, t_units *units)
 	not_activate(units);
 	if (philos[i]->dur >= units->time_to_die)
 		dying_msg(philos[i]);
+	for (size_t j = 0; j < units->size; j++)
+		printf("%ld ", philos[j]->cnt);
+	printf("\n");
 }
 
 int	main(int argc, char *argv[])

@@ -6,7 +6,7 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 20:41:33 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/14 17:42:01 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/14 18:00:22 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ void	*thr_start(void *arg)
 	if (philo->num % 2)
 		usleep(500);
 	philo->start_time = get_now();
+	if (philo->num % 2)
+		usleep(500);
 	if (philo->l_fork == philo->r_fork)
 	{
 		single_philo_never_eat_spagetti(philo);
