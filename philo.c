@@ -6,7 +6,7 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 19:24:36 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/13 16:28:03 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/14 16:42:43 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@ t_units	*get_units(int argc, char **argv)
 
 	units = (t_units *)malloc(sizeof(t_units));
 	units->size = ft_atoi(argv[1]);
-	units->wait = 1;
-	units->activate = 1;
+	units->activate = 0;
 	units->init_time = 0;
 	units->time_to_die = ft_atoi(argv[2]) * 1000;
 	units->time_to_eat = ft_atoi(argv[3]) * 1000;
@@ -65,17 +64,17 @@ void	*time_check(void *arg)
 	size_t	i;
 
 	philos = (t_philo **)arg;
-	while (philos[0]->units->wait)
+	while (!is_activate(philos[0]->units))
 		usleep(100);
 	i = 0;
-	while (philos[0]->units->activate)
+	while (is_activate(philos[i]->units))
 	{
 		if (philos[i]->start_time != 0)
 			philos[i]->dur = get_now() - philos[i]->start_time;
 		i++;
 		if (i == philos[0]->units->size)
 			i = 0;
-		usleep(3000);
+		usleep(500);
 	}
 	return (NULL);
 }
@@ -88,7 +87,7 @@ void	philos_monitor(t_philo **philos, t_units *units)
 	i = 0;
 	enough = 0;
 	units->init_time = get_now();
-	units->wait = 0;
+	not_activate(units);
 	while (philos[i]->dur < units->time_to_die)
 	{
 		if (philos[i]->cnt >= units->must_eat && !philos[i]->checked)
@@ -102,9 +101,12 @@ void	philos_monitor(t_philo **philos, t_units *units)
 		if (i == units->size)
 			i = 0;
 	}
-	units->activate = 0;
+	not_activate(units);
 	if (philos[i]->dur >= units->time_to_die)
 		dying_msg(philos[i]);
+	for (size_t j = 0; j < units->size; j++)
+		printf("%ld ", philos[j]->cnt);
+	printf("\n");
 }
 
 int	main(int argc, char *argv[])

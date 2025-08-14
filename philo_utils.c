@@ -6,7 +6,7 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 17:23:36 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/13 16:29:21 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/14 16:28:27 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,23 @@ suseconds_t	get_now(void)
 	gettimeofday(&tv, NULL);
 	ts = tv.tv_sec * 1000 * 1000 + tv.tv_usec;
 	return (ts);
+}
+
+int	is_activate(t_units *units)
+{
+	int	bool;
+
+	pthread_mutex_lock(&units->activate_lock);
+	bool = units->activate;
+	pthread_mutex_unlock(&units->activate_lock);
+	return (bool);
+}
+
+void	not_activate(t_units *units)
+{
+	pthread_mutex_lock(&units->activate_lock);
+	units->activate = !units->activate;
+	pthread_mutex_unlock(&units->activate_lock);
 }
 
 int	ft_atoi(const char *s)
@@ -46,26 +63,6 @@ int	ft_atoi(const char *s)
 		i++;
 	}
 	return (flag * result);
-}
-
-void	state_print(t_philo *philo, char *state)
-{
-	if (philo->units->activate)
-	{
-		pthread_mutex_lock(&philo->units->print_lock);
-		if (philo->units->activate)
-			printf("%ld %ld %s\n", (get_now() - philo->units->init_time)
-				/ 1000, philo->num, state);
-		pthread_mutex_unlock(&philo->units->print_lock);
-	}
-}
-
-void	dying_msg(t_philo *philo)
-{
-	pthread_mutex_lock(&philo->units->print_lock);
-	printf("%ld %ld is died\n",
-		(get_now() - philo->units->init_time) / 1000, philo->num);
-	pthread_mutex_unlock(&philo->units->print_lock);
 }
 
 void	memory_clean(t_philo **philos, t_units *units)

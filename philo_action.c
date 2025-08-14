@@ -6,7 +6,7 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 20:41:33 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/13 16:29:49 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/14 16:42:41 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ static void	single_philo_never_eat_spagetti(t_philo *philo)
 	state_print(philo, "is thinking");
 	pthread_mutex_lock(philo->r_fork);
 	state_print(philo, "has taken a fork");
+	pthread_mutex_unlock(philo->r_fork);
 }
 
 static void	thinking_time(t_philo *philo)
@@ -42,7 +43,7 @@ static void	thinking_time(t_philo *philo)
 //Critical section
 static void	eating_time(t_philo *philo)
 {
-	if (philo->units->activate)
+	if (is_activate(philo->units))
 	{
 		philo->start_time = get_now();
 		state_print(philo, "is eating");
@@ -57,7 +58,7 @@ static void	eating_time(t_philo *philo)
 //Exit section
 static void	sleeping_time(t_philo *philo)
 {
-	if (philo->units->activate)
+	if (is_activate(philo->units))
 	{
 		state_print(philo, "is sleeping");
 		usleep(philo->units->time_to_sleep);
@@ -69,15 +70,17 @@ void	*thr_start(void *arg)
 	t_philo		*philo;
 
 	philo = (t_philo *)arg;
-	while (philo->units->wait)
+	while (!is_activate(philo->units))
 		usleep(100);
 	philo->start_time = get_now();
+	if (philo->num % 2)
+		usleep(500);
 	if (philo->l_fork == philo->r_fork)
 	{
 		single_philo_never_eat_spagetti(philo);
 		return (NULL);
 	}
-	while (philo->units->activate)
+	while (is_activate(philo->units))
 	{
 		thinking_time(philo);
 		eating_time(philo);
