@@ -6,14 +6,14 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 20:41:33 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/15 13:25:48 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/15 14:38:57 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 //Entry section
-static void	single_philo_never_eat_spagetti(t_philo *philo)
+static void	single_philo_never_eat_spaghetti(t_philo *philo)
 {
 	state_print(philo, "is thinking");
 	pthread_mutex_lock(philo->r_fork);
@@ -50,10 +50,10 @@ static void	eating_time(t_philo *philo)
 		usleep(philo->units->time_to_eat);
 		philo->cnt++;
 	}
+	philo->start_time = get_now();
 	pthread_mutex_unlock(philo->l_fork);
 	pthread_mutex_unlock(philo->r_fork);
 	philo->eating = 0;
-	philo->start_time = get_now();
 }
 
 //Exit section
@@ -71,14 +71,14 @@ void	*thr_start(void *arg)
 	t_philo		*philo;
 
 	philo = (t_philo *)arg;
-	while (!is_activate(philo->units))
-		usleep(100);
+	pthread_mutex_lock(philo->units->activate_lock);
+	pthread_mutex_unlock(philo->units->activate_lock);
 	philo->start_time = get_now();
 	if (philo->num % 2)
 		usleep(500);
 	if (philo->l_fork == philo->r_fork)
 	{
-		single_philo_never_eat_spagetti(philo);
+		single_philo_never_eat_spaghetti(philo);
 		return (NULL);
 	}
 	while (is_activate(philo->units))
