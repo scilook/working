@@ -6,7 +6,7 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 20:41:33 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/14 18:21:46 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/15 13:25:48 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,14 @@ static void	eating_time(t_philo *philo)
 {
 	if (is_activate(philo->units))
 	{
-		philo->start_time = get_now();
+		philo->eating = 1;
 		state_print(philo, "is eating");
 		usleep(philo->units->time_to_eat);
 		philo->cnt++;
 	}
 	pthread_mutex_unlock(philo->l_fork);
 	pthread_mutex_unlock(philo->r_fork);
+	philo->eating = 0;
 	philo->start_time = get_now();
 }
 

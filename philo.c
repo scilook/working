@@ -6,7 +6,7 @@
 /*   By: hyeson <hyeson@student.42gyeongsan.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 19:24:36 by hyeson            #+#    #+#             */
-/*   Updated: 2025/08/14 17:59:05 by hyeson           ###   ########.fr       */
+/*   Updated: 2025/08/15 13:16:52 by hyeson           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ t_philo	**init_philos(t_philo **philos, t_units *units)
 		philos[i]->l_fork = malloc(sizeof(pthread_mutex_t));
 		pthread_mutex_init(philos[i]->l_fork, NULL);
 		philos[i]->cnt = 0;
+		philos[i]->eating = 0;
 		philos[i]->checked = 0;
 		philos[i]->start_time = 0;
 		philos[i]->dur = 0;
@@ -88,7 +89,7 @@ void	philos_monitor(t_philo **philos, t_units *units)
 	enough = 0;
 	units->init_time = get_now();
 	not_activate(units);
-	while (philos[i]->dur < units->time_to_die)
+	while (philos[i]->dur < units->time_to_die || philos[i]->eating == 1)
 	{
 		if (philos[i]->cnt >= units->must_eat && !philos[i]->checked)
 		{
